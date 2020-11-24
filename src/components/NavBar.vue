@@ -33,8 +33,9 @@
                 getSearchSongs(value).then(songs=>{
 
                     let ls =songs.result.songs
-                    this.$store.state.musicList=ls
-                    console.log('new list',this.$store.state.musicList)
+                    this.$store.state.searchMusicList=ls
+                    this.$store.state.isTopList = false
+                    console.log('new list',this.$store.state.searchMusicList)
                 })
             }
         }
@@ -59,10 +60,12 @@
     }
 
     .mid{
+        position: fixed;
+        top: 0;
         height: 36px;
         width: 100%;
-        margin-left: 36px;
-        margin-right: 36px;
+        padding-left: 36px;
+        padding-right: 36px;
     }
     .right{
         /*overflow: hidden;*/

@@ -1,7 +1,7 @@
 <template>
     <div id="musiclist">
         <div class="list">
-            <a-list item-layout="horizontal" :data-source="this.musicList">
+            <a-list item-layout="horizontal" v-show="isTopList" :data-source="this.topMusicList">
                 <a-list-item slot="renderItem" slot-scope="item" >
                     <a-list-item-meta  @click="play(item.id)">
                         <a slot="title">{{item.name}}</a>
@@ -11,30 +11,57 @@
                     <div>{{(item.duration / 1000)|format}}</div>
                 </a-list-item>
             </a-list>
+            <a-list item-layout="horizontal" v-show="!isTopList" :data-source="this.searchMusicList">
+                <a-list-item slot="renderItem" slot-scope="item" >
+                    <a-list-item-meta  @click="play(item.id)">
+                        <a slot="title">{{item.name}}</a>
+                        <a slot="description">{{item.artists[0].name}}</a>
+                        <a-avatar slot="avatar"  :src="item.album.picId|formatUrl" />
+                    </a-list-item-meta>
+                    <div>{{(item.duration / 1000)|format}}</div>
+                </a-list-item>
+            </a-list>
         </div>
     </div>
 </template>
 
 <script>
+
     import {getTopSongs,getSingleMusic} from "@/api/song";
 
-    import {format} from "@/utils/util";
+    import {format,formatUrl} from "@/utils/util";
 
     export default {
         name: "MusicList",
         computed:{
-            musicList: {
+            topMusicList: {
                 get: function () {
-                    return this.$store.state.musicList
+                    return this.$store.state.topMusicList
                 },
                 set: function (value) {
-                    this.$store.commit('setMusicList', {value})
+                    this.$store.commit('setTopMusicList', {value})
                 }
+            },
+            searchMusicList: {
+                get: function () {
+                    return this.$store.state.searchMusicList
+                },
+                set: function (value) {
+                    this.$store.commit('setSearchMusicList', {value})
+                }
+            },
+            isTopList: {
+                get: function () {
+                    return this.$store.state.isTopList
+                },
+                set: function (value) {
+                    this.$store.commit('changeIsTopList', {value})
+                }
+
             },
         },
         data(){
             return {
-                // musicList:[]
             }
         },
         methods:{
@@ -42,7 +69,7 @@
                 // console.log(this.musicList[index])
                 console.log(index)
                 this.$store.commit('setMusicId',{index})
-                this.$store.state.isPlaying = true
+                this.$store.state.showPause = false
                 getSingleMusic(index).then(url=>{
                     // console.log(url)
                     let u = url.data[0].url;
@@ -56,20 +83,27 @@
         },
         watch:{
             // eslint-disable-next-line no-unused-vars
-            musicList: function(newls,oldls) {
-                this.musicList=this.$store.state.musicList
-                console.log("list",this.musicList)
+            topMusicList: function(newls,oldls) {
+                this.topmusicList=this.$store.state.topMusicList
+                console.log("list",this.musicList[0].album.picUrl)
+            },
+            searchMusicList: function (newls) {
+                // this.searchMusicList=this.$store.state.searchMusicList
+                console.log("search",this.$store.state.searchMusicList)
+            },
+            isTopList: function() {
+
             }
         },
         filters:{
-            format
+            format,formatUrl
         },
         created:function () {
            getTopSongs(0).then(songs=>{
                // console.log(songs.data)
-               this.$store.state.musicList=songs.data
+               this.$store.state.topMusicList=songs.data
                // console.log(this.$store.getters.musicList)
-               this.musicList = this.$store.getters.musicList
+               this.musicList = this.$store.getters.topMusicList
                // console.log(this.musicList)
            })
        }

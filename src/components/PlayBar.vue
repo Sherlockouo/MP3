@@ -63,6 +63,15 @@
             //         // this.currentTime = value
             //     }
             // },
+            showPause: {
+                get: function () {
+                    return this.$store.state.showPause
+                },
+                set: function (value) {
+                    this.$store.commit('changeShowPause', {value})
+                }
+
+            },
             music: {
                 get: function () {
                     return this.$store.state.music
@@ -94,7 +103,7 @@
                 //是否显示播放列表
                 showMusicList: false,
                 //是否暂停
-                showPause: true,
+                // showPause: true,
                 percent: 0,
                 musicList: [],
                 imgUrl: "",
@@ -126,12 +135,10 @@
                 // console.log(this.currentTime)
                 if (this.showPause == false) {
                     this.audio.pause()
-                    this.showPause = !this.$store.state.showPause
-                    this.$store.state.showPause = this.showPause
+                    this.$store.state.showPause = !this.showPause
                 } else {
                     this.audio.play();
-                    this.showPause = !this.$store.state.showPause
-                    this.$store.state.showPause = this.showPause
+                    this.$store.state.showPause = !this.showPause
                 }
                 // console.log(this.$store.state.showPause = this.showPause);
 
@@ -153,15 +160,16 @@
                 this.$store.commit('setAudioUrl', {u})
                 this.audio.play();
                 this.currentTime = this.audio.currentTime
-                console.log("shit", this.currentTime)
+                // console.log("shit", this.currentTime)
+                this.audio.addEventListener('timeupdate', (event) => {
+                    // console.log(this.currentTime)
+                    this.currentTime = this.audio.currentTime
+                    this.percent = (this.currentTime / this.audio.duration).toFixed(4) * 100
+                    // console.log("percent",this.percent)
+                })
             })
 
-            this.audio.addEventListener('timeupdate',(event)=>{
-                // console.log(this.currentTime)
-                this.currentTime = this.audio.currentTime
-                this.percent = (this.currentTime/this.audio.duration).toFixed(4)*100
-                console.log("percent",this.percent)
-            })
+
 
         },
         watch: {
@@ -174,7 +182,7 @@
                 this.audio.play()
                 // this.audio=this.$store.state.audio
             },
-            currentTime(newT){
+            currentTime(newT) {
                 // working
                 // console.log(newT)
             },
@@ -190,6 +198,9 @@
                     newp = newp * piece
                     bar.style.width = newp + "px"
                 }
+            },
+            showPause(newV) {
+                // console.log("showPause",this.showPause)
             }
         }
     }

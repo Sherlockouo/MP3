@@ -20,18 +20,24 @@ const store = new Vuex.Store({
     showPause: false,
     // 当前播放的音乐id
     music: 0,
-    //主list
-    musicList: [],
+    //top list
+    topMusicList: [],
+    // searches one
+    searchMusicList:[],
     //播放list
     musicToPlayList:[],
-    isPlaying: false
+    isPlaying: false,
+    isTopList: true,
   },
   getters:{
-    musicList: state=>{
-      return state.musicList
+    topMusicList: state=>{
+      return state.topMusicList
     }
   },
   mutations:{
+    changeIsTopList(state,isTopList){
+      state.isTopList=isTopList
+    },
     changeShowPause(state,showPause){
       state.showPaus=showPause
     },
@@ -44,8 +50,11 @@ const store = new Vuex.Store({
     setMusicId(state,id){
       state.music=id
     },
-    setMusicList(state,musiclist){
-      state.musicList,musiclist
+    setTopMusicList(state,musiclist){
+      state.topMusicList = musiclist
+    },
+    setSearchMusicList(state,musiclist){
+      state.searchMusicList = musiclist
     },
     setMusicToPlay(state,toPlay){
       state.musicToPlayList=toPlay

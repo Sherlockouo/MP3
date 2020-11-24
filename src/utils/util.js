@@ -8,3 +8,7 @@ export function format(value) {
     let second = Math.floor(value % 60)
     return `${addZero(minute)}:${addZero(second)}`
 }
+
+export function formatUrl(value) {
+    return "http://p4.music.126.net/HUs7hjdVXSJeWct-iWsgsw==/"+value+".jpg"
+}
